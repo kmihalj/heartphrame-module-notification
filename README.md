@@ -12,6 +12,7 @@ Croatian documentation: [README_hr.md](README_hr.md)
 - unread count in the top-right Auth user menu
 - dedicated `/notifications` screen with pagination
 - mark one notification read by opening it, or mark all read
+- remove one read notification or clear all read notifications
 - source module, source reference, structured JSON metadata, and safe local link
 - per-user deduplication key for repeatable background or workflow events
 - optional e-mail copies through `heartphrame-module-email`

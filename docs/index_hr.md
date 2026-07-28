@@ -34,6 +34,14 @@ dedup ključ, postojeći redak se osvježava i ponovno postaje nepročitan.
 Za popis primatelja koristite `notifyUsers()`. Dupli i nevaljani ID-evi se
 preskaču.
 
+## Stanje čitanja i uklanjanje
+
+Otvaranje obavijesti označava je pročitanom prije praćenja sigurne lokalne
+poveznice. U inboxu se mogu označiti pročitanima i sve poruke odjednom. Korisnik
+može trajno ukloniti pojedinu vlastitu pročitanu obavijest ili sve svoje
+pročitane obavijesti; tim radnjama nije moguće ukloniti nepročitane ni tuđe
+poruke.
+
 ## Opcionalni e-mail
 
 Kada je module-email instaliran i uključene su kopije obavijesti, prva in-app

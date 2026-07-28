@@ -23,7 +23,8 @@ declare(strict_types=1);
  *         created_at: string,
  *         updated_at: string,
  *         is_read: bool,
- *         open_url: string
+ *         open_url: string,
+ *         delete_url: string
  *     }>,
  *     total: int,
  *     page: int,
@@ -32,12 +33,15 @@ declare(strict_types=1);
  * } $inbox
  * @var int $unreadCount
  * @var string $markAllPath
+ * @var string $deleteAllReadPath
  * @var string $indexPath
  */
 
 $items = $inbox['items'] ?? [];
+$total = (int)($inbox['total'] ?? 0);
 $page = (int)($inbox['page'] ?? 1);
 $pages = (int)($inbox['pages'] ?? 1);
+$readCount = max(0, $total - $unreadCount);
 ?>
 <section class="card shadow-sm">
     <div class="card-body">
@@ -52,13 +56,25 @@ $pages = (int)($inbox['pages'] ?? 1);
                     ) ?>
                 </p>
             </div>
-            <?php if (!$migrationMissing && $unreadCount > 0) : ?>
-                <form method="post" action="<?= $this->escape($markAllPath) ?>">
-                <?= $this->csrfHandler->generateCsrfTokenInputField() ?>
-                    <button class="btn btn-sm btn-secondary" type="submit">
-                    <?= $this->escape(__('Označi sve pročitanima')) ?>
-                    </button>
-                </form>
+            <?php if (!$migrationMissing && ($unreadCount > 0 || $readCount > 0)) : ?>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <?php if ($unreadCount > 0) : ?>
+                        <form method="post" action="<?= $this->escape($markAllPath) ?>">
+                            <?= $this->csrfHandler->generateCsrfTokenInputField() ?>
+                            <button class="btn btn-sm btn-secondary" type="submit">
+                                <?= $this->escape(__('Označi sve pročitanima')) ?>
+                            </button>
+                        </form>
+                    <?php endif; ?>
+                    <?php if ($readCount > 0) : ?>
+                        <form method="post" action="<?= $this->escape($deleteAllReadPath) ?>">
+                            <?= $this->csrfHandler->generateCsrfTokenInputField() ?>
+                            <button class="btn btn-sm btn-danger" type="submit">
+                                <?= $this->escape(__('Ukloni pročitane')) ?>
+                            </button>
+                        </form>
+                    <?php endif; ?>
+                </div>
             <?php endif; ?>
         </header>
 
@@ -80,29 +96,65 @@ $pages = (int)($inbox['pages'] ?? 1);
                 $href = is_scalar($notification['open_url'] ?? null)
                     ? (string)$notification['open_url']
                     : '';
+                $deleteUrl = is_scalar($notification['delete_url'] ?? null)
+                    ? (string)$notification['delete_url']
+                    : '';
                 $isRead = (bool)($notification['is_read'] ?? false);
                 $itemClass = $isRead ? '' : 'border-start border-4 border-primary';
                 ?>
-                    <a
-                        class="list-group-item list-group-item-action py-3 <?= $itemClass ?>"
-                        href="<?= $this->escape($href) ?>"
-                    >
-                        <div class="d-flex align-items-start justify-content-between gap-3">
-                            <div>
-                                <div class="<?= $isRead ? '' : 'fw-semibold' ?>">
-                                <?= $this->escape((string)($notification['title'] ?? '')) ?>
+                    <div class="list-group-item py-3 <?= $itemClass ?>">
+                        <div class="d-flex align-items-start gap-2">
+                            <a
+                                class="flex-grow-1 text-body text-decoration-none"
+                                href="<?= $this->escape($href) ?>"
+                            >
+                                <div class="d-flex align-items-start justify-content-between gap-3">
+                                    <div>
+                                        <div class="<?= $isRead ? '' : 'fw-semibold' ?>">
+                                            <?= $this->escape((string)($notification['title'] ?? '')) ?>
+                                        </div>
+                                        <div class="text-body-secondary mt-1">
+                                            <?= nl2br(
+                                                $this->escape((string)($notification['message'] ?? '')),
+                                            ) ?>
+                                        </div>
+                                    </div>
+                                    <time class="small text-body-secondary text-nowrap">
+                                        <?= $this->escape((string)($notification['created_at'] ?? '')) ?>
+                                    </time>
                                 </div>
-                                <div class="text-body-secondary mt-1">
-                                <?= nl2br(
-                                    $this->escape((string)($notification['message'] ?? '')),
-                                ) ?>
-                                </div>
-                            </div>
-                            <time class="small text-body-secondary text-nowrap">
-                            <?= $this->escape((string)($notification['created_at'] ?? '')) ?>
-                            </time>
+                            </a>
+                            <?php if ($isRead) : ?>
+                                <form method="post" action="<?= $this->escape($deleteUrl) ?>">
+                                    <?= $this->csrfHandler->generateCsrfTokenInputField() ?>
+                                    <button
+                                        class="btn btn-sm btn-danger p-2 lh-1"
+                                        type="submit"
+                                        title="<?= $this->escape(__('Ukloni obavijest')) ?>"
+                                        aria-label="<?= $this->escape(__('Ukloni obavijest')) ?>"
+                                    >
+                                        <svg
+                                            aria-hidden="true"
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <path d="M3 6h18"/>
+                                            <path d="M8 6V4h8v2"/>
+                                            <path d="M19 6l-1 14H6L5 6"/>
+                                            <path d="M10 11v5"/>
+                                            <path d="M14 11v5"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            <?php endif; ?>
                         </div>
-                    </a>
+                    </div>
             <?php endforeach; ?>
             </div>
 

@@ -34,6 +34,14 @@ the same user, the existing row is refreshed and becomes unread again.
 Use `notifyUsers()` for a list of recipients. Duplicate and invalid IDs are
 ignored.
 
+## Read State and Removal
+
+Opening a notification marks it as read before following its safe local link.
+The inbox can also mark every notification as read. A user may permanently
+remove one of their read notifications or clear all their read notifications;
+unread notifications and messages owned by another user cannot be removed by
+these actions.
+
 ## Optional E-mail
 
 When module-email is installed and notification copies are enabled, the first

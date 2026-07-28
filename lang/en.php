@@ -8,6 +8,13 @@ return [
     'Nema nepročitanih poruka.' => 'There are no unread messages.',
     'Označi sve pročitanima' => 'Mark all as read',
     'Sve obavijesti označene su pročitanima.' => 'All notifications were marked as read.',
+    'Ukloni pročitane' => 'Remove read',
+    'Ukloni obavijest' => 'Remove notification',
+    'Pročitana obavijest je uklonjena.' => 'The read notification was removed.',
+    'Ukloniti se može samo postojeća pročitana obavijest.' =>
+        'Only an existing read notification can be removed.',
+    'Uklonjene pročitane obavijesti: %d' => 'Removed read notifications: %d',
+    'Nema pročitanih obavijesti za uklanjanje.' => 'There are no read notifications to remove.',
     'Nedostaje migracija obavijesti.' => 'The notification migration is missing.',
     'Instalirajte početnu migraciju i pokrenite ORM migracije.' =>
         'Install the initial migration and run ORM migrations.',

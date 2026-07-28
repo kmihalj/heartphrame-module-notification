@@ -8,6 +8,13 @@ return [
     'Nema nepročitanih poruka.' => 'Nema nepročitanih poruka.',
     'Označi sve pročitanima' => 'Označi sve pročitanima',
     'Sve obavijesti označene su pročitanima.' => 'Sve obavijesti označene su pročitanima.',
+    'Ukloni pročitane' => 'Ukloni pročitane',
+    'Ukloni obavijest' => 'Ukloni obavijest',
+    'Pročitana obavijest je uklonjena.' => 'Pročitana obavijest je uklonjena.',
+    'Ukloniti se može samo postojeća pročitana obavijest.' =>
+        'Ukloniti se može samo postojeća pročitana obavijest.',
+    'Uklonjene pročitane obavijesti: %d' => 'Uklonjene pročitane obavijesti: %d',
+    'Nema pročitanih obavijesti za uklanjanje.' => 'Nema pročitanih obavijesti za uklanjanje.',
     'Nedostaje migracija obavijesti.' => 'Nedostaje migracija obavijesti.',
     'Instalirajte početnu migraciju i pokrenite ORM migracije.' =>
         'Instalirajte početnu migraciju i pokrenite ORM migracije.',

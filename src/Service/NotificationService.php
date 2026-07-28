@@ -25,9 +25,9 @@ use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
 /**
- * HR: Jedinstveni poslovni API za stvaranje, čitanje i označavanje korisničkih
- *     obavijesti. Drugi moduli ne trebaju poznavati strukturu tablice.
- * EN: The single business API for creating, reading, and marking user
+ * HR: Jedinstveni poslovni API za stvaranje, čitanje, označavanje i uklanjanje
+ *     korisničkih obavijesti. Drugi moduli ne trebaju poznavati strukturu tablice.
+ * EN: The single business API for creating, reading, marking, and removing user
  *     notifications. Other modules do not need to know the table structure.
  */
 final readonly class NotificationService
@@ -278,6 +278,42 @@ final readonly class NotificationService
             ->where('user_id', '=', $userId)
             ->whereNull('read_at')
             ->update(['read_at' => $now, 'updated_at' => $now]);
+    }
+
+    /**
+     * HR: Trajno uklanja jednu pročitanu obavijest koja pripada zadanom korisniku.
+     *     Nepročitane i tuđe obavijesti namjerno ostavlja netaknutima.
+     * EN: Permanently removes one read notification owned by the given user.
+     *     Unread notifications and notifications owned by others remain untouched.
+     */
+    public function deleteRead(int $userId, string $uuid): bool
+    {
+        if ($userId <= 0 || trim($uuid) === '' || !$this->tablesReady()) {
+            return false;
+        }
+
+        return $this->database->table(ModuleNotification::TABLE_NOTIFICATIONS)
+            ->where('user_id', '=', $userId)
+            ->where('uuid', '=', trim($uuid))
+            ->whereNotNull('read_at')
+            ->delete() > 0;
+    }
+
+    /**
+     * HR: Trajno uklanja sve pročitane obavijesti jednog korisnika i vraća njihov broj.
+     * EN: Permanently removes all read notifications for one user and returns their count.
+     */
+    public function deleteAllRead(int $userId): int
+    {
+        $this->assertTablesReady();
+        if ($userId <= 0) {
+            return 0;
+        }
+
+        return $this->database->table(ModuleNotification::TABLE_NOTIFICATIONS)
+            ->where('user_id', '=', $userId)
+            ->whereNotNull('read_at')
+            ->delete();
     }
 
     /**

@@ -78,8 +78,8 @@ return new class extends \HeartPhrame\Module\AbstractModuleManifest {
     }
 
     /**
-     * HR: Registrira inbox i akcije čitanja samo za prijavljene korisnike.
-     * EN: Registers inbox and read actions for authenticated users only.
+     * HR: Registrira inbox te akcije čitanja i uklanjanja samo za prijavljene korisnike.
+     * EN: Registers inbox, read, and removal actions for authenticated users only.
      */
     public function getBaseRoutes(): array
     {
@@ -99,6 +99,20 @@ return new class extends \HeartPhrame\Module\AbstractModuleManifest {
                 '/notifications/read-all',
                 NotificationController::class . '@markAllRead',
                 'notification.read-all',
+                $authenticated,
+            ],
+            [
+                'POST',
+                '/notifications/delete/{uuid}',
+                NotificationController::class . '@deleteRead',
+                'notification.delete',
+                $authenticated,
+            ],
+            [
+                'POST',
+                '/notifications/delete-read',
+                NotificationController::class . '@deleteAllRead',
+                'notification.delete-read',
                 $authenticated,
             ],
         ];

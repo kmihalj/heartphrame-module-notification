@@ -11,6 +11,7 @@ English documentation: [README.md](README.md)
 - broj nepročitanih uz ime korisnika u gornjem desnom Auth meniju
 - zaseban paginirani ekran `/notifications`
 - označavanje jedne poruke čitanjem ili svih jednim klikom
+- uklanjanje pojedine pročitane poruke ili svih pročitanih poruka
 - izvorni modul, referenca, strukturirani JSON podaci i siguran lokalni link
 - korisnički dedup ključ za ponovljive workflow i pozadinske događaje
 - opcionalne e-mail kopije kroz `heartphrame-module-email`

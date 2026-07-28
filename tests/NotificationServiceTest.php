@@ -105,6 +105,47 @@ final class NotificationServiceTest extends TestCase
     }
 
     /**
+     * HR: Provjerava da korisnik može ukloniti samo vlastite pročitane obavijesti.
+     * EN: Verifies that a user can remove only their own read notifications.
+     */
+    public function testOnlyOwnedReadNotificationsCanBeRemoved(): void
+    {
+        $first = $this->notifications->notifyUser(
+            7,
+            'workspace.review',
+            'Pregled',
+            'Prva poruka',
+            sendEmail: false,
+        );
+        $second = $this->notifications->notifyUser(
+            7,
+            'workspace.published',
+            'Objavljeno',
+            'Druga poruka',
+            sendEmail: false,
+        );
+        $other = $this->notifications->notifyUser(
+            8,
+            'workspace.review',
+            'Tuđa poruka',
+            'Treća poruka',
+            sendEmail: false,
+        );
+
+        $this->assertFalse($this->notifications->deleteRead(7, (string)$first['uuid']));
+        $this->assertIsArray($this->notifications->markRead(7, (string)$first['uuid']));
+        $this->assertFalse($this->notifications->deleteRead(8, (string)$first['uuid']));
+        $this->assertTrue($this->notifications->deleteRead(7, (string)$first['uuid']));
+        $this->assertNull($this->notifications->findForUserByUuid(7, (string)$first['uuid']));
+
+        $this->assertIsArray($this->notifications->markRead(7, (string)$second['uuid']));
+        $this->assertIsArray($this->notifications->markRead(8, (string)$other['uuid']));
+        $this->assertSame(1, $this->notifications->deleteAllRead(7));
+        $this->assertCount(0, $this->notifications->inbox(7)['items']);
+        $this->assertCount(1, $this->notifications->inbox(8)['items']);
+    }
+
+    /**
      * HR: Vraća minimalni PSR container koji nema opcionalne servise.
      * EN: Returns a minimal PSR container with no optional services.
      */

@@ -25,8 +25,8 @@ use function str_starts_with;
 use function trim;
 
 /**
- * HR: Poslužuje korisnički inbox i akcije označavanja poruka pročitanima.
- * EN: Serves the user inbox and actions for marking notifications as read.
+ * HR: Poslužuje korisnički inbox te akcije čitanja i uklanjanja poruka.
+ * EN: Serves the user inbox and actions for reading and removing notifications.
  */
 final readonly class NotificationController
 {
@@ -57,6 +57,10 @@ final readonly class NotificationController
                 'inbox' => ['items' => [], 'total' => 0, 'page' => 1, 'pages' => 1, 'page_size' => 30],
                 'unreadCount' => 0,
                 'markAllPath' => $this->pathFor('notification.read-all', '/notifications/read-all'),
+                'deleteAllReadPath' => $this->pathFor(
+                    'notification.delete-read',
+                    '/notifications/delete-read',
+                ),
                 'indexPath' => $this->pathFor('notification.index', '/notifications'),
             ], true, 503);
         }
@@ -75,6 +79,11 @@ final readonly class NotificationController
                 '/notifications/open/{uuid}',
                 ['uuid' => $uuid],
             );
+            $inbox['items'][$index]['delete_url'] = $this->pathFor(
+                'notification.delete',
+                '/notifications/delete/{uuid}',
+                ['uuid' => $uuid],
+            );
         }
 
         return $this->viewRenderer->render('notification/index', [
@@ -83,6 +92,10 @@ final readonly class NotificationController
             'inbox' => $inbox,
             'unreadCount' => $this->notifications->unreadCount($userId),
             'markAllPath' => $this->pathFor('notification.read-all', '/notifications/read-all'),
+            'deleteAllReadPath' => $this->pathFor(
+                'notification.delete-read',
+                '/notifications/delete-read',
+            ),
             'indexPath' => $this->pathFor('notification.index', '/notifications'),
         ]);
     }
@@ -116,6 +129,44 @@ final readonly class NotificationController
         $this->alertHandler->add(new Alert(
             __('Sve obavijesti označene su pročitanima.'),
             AlertLevelEnum::Success,
+        ));
+
+        return $this->responseFactory->redirect(
+            $this->pathFor('notification.index', '/notifications'),
+        );
+    }
+
+    /**
+     * HR: Uklanja jednu pročitanu obavijest ako pripada prijavljenom korisniku.
+     * EN: Removes one read notification when it belongs to the authenticated user.
+     */
+    public function deleteRead(string $uuid): ResponseInterface
+    {
+        $deleted = $this->notifications->deleteRead($this->currentUserId(), $uuid);
+        $this->alertHandler->add(new Alert(
+            $deleted
+                ? __('Pročitana obavijest je uklonjena.')
+                : __('Ukloniti se može samo postojeća pročitana obavijest.'),
+            $deleted ? AlertLevelEnum::Success : AlertLevelEnum::Warning,
+        ));
+
+        return $this->responseFactory->redirect(
+            $this->pathFor('notification.index', '/notifications'),
+        );
+    }
+
+    /**
+     * HR: Uklanja sve pročitane obavijesti prijavljenog korisnika.
+     * EN: Removes all read notifications owned by the authenticated user.
+     */
+    public function deleteAllRead(): ResponseInterface
+    {
+        $deleted = $this->notifications->deleteAllRead($this->currentUserId());
+        $this->alertHandler->add(new Alert(
+            $deleted > 0
+                ? sprintf(__('Uklonjene pročitane obavijesti: %d'), $deleted)
+                : __('Nema pročitanih obavijesti za uklanjanje.'),
+            $deleted > 0 ? AlertLevelEnum::Success : AlertLevelEnum::Info,
         ));
 
         return $this->responseFactory->redirect(
