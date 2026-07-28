@@ -10,6 +10,9 @@ Pozivatelji ne trebaju poznavati shemu baze.
 i putanju inboxa. Badge je tako mala opcionalna integracija, a Auth nije vezan
 uz internu bazu obavijesti.
 
+Inbox formatira vrijeme prema aktivnom jeziku aplikacije, a izvornu strojno
+čitljivu vrijednost zadržava u HTML `datetime` atributu.
+
 ## Kreiranje obavijesti
 
 ```php

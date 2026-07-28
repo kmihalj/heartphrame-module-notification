@@ -42,6 +42,23 @@ $total = (int)($inbox['total'] ?? 0);
 $page = (int)($inbox['page'] ?? 1);
 $pages = (int)($inbox['pages'] ?? 1);
 $readCount = max(0, $total - $unreadCount);
+
+/**
+ * HR: Pretvara spremljeni DB timestamp u format aktivnog jezika sučelja.
+ * EN: Converts a stored database timestamp into the active interface language format.
+ */
+$formatDateTime = static function (string $value): string {
+    $value = trim($value);
+    if ($value === '') {
+        return '';
+    }
+
+    try {
+        return (new DateTimeImmutable($value))->format(__('notification_datetime_format'));
+    } catch (Throwable) {
+        return $value;
+    }
+};
 ?>
 <section class="card shadow-sm">
     <div class="card-body">
@@ -118,8 +135,12 @@ $readCount = max(0, $total - $unreadCount);
                                 </div>
                             </a>
                             <div class="d-flex flex-shrink-0 align-items-center gap-2">
-                                <time class="small text-body-secondary text-nowrap">
-                                    <?= $this->escape((string)($notification['created_at'] ?? '')) ?>
+                                <?php $createdAt = (string)($notification['created_at'] ?? ''); ?>
+                                <time
+                                    class="small text-body-secondary text-nowrap"
+                                    datetime="<?= $this->escape($createdAt) ?>"
+                                >
+                                    <?= $this->escape($formatDateTime($createdAt)) ?>
                                 </time>
                                 <?php if ($isRead) : ?>
                                     <form method="post" action="<?= $this->escape($deleteUrl) ?>">

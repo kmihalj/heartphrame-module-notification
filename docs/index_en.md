@@ -10,6 +10,9 @@ to know the database schema.
 to Auth navigation. The badge therefore remains a small optional integration
 rather than coupling Auth to the inbox database.
 
+The inbox formats timestamps for the active application language while keeping
+the original machine-readable value in the HTML `datetime` attribute.
+
 ## Creating a Notification
 
 ```php

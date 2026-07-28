@@ -6,6 +6,7 @@ return [
     'Obavijesti' => 'Notifications',
     'Nepročitane poruke: %d' => 'Unread messages: %d',
     'Nema nepročitanih poruka.' => 'There are no unread messages.',
+    'notification_datetime_format' => 'M j, Y, g:i A',
     'Označi sve pročitanima' => 'Mark all as read',
     'Sve obavijesti označene su pročitanima.' => 'All notifications were marked as read.',
     'Ukloni pročitane' => 'Remove read',

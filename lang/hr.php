@@ -6,6 +6,7 @@ return [
     'Obavijesti' => 'Obavijesti',
     'Nepročitane poruke: %d' => 'Nepročitane poruke: %d',
     'Nema nepročitanih poruka.' => 'Nema nepročitanih poruka.',
+    'notification_datetime_format' => 'j. n. Y. H:i',
     'Označi sve pročitanima' => 'Označi sve pročitanima',
     'Sve obavijesti označene su pročitanima.' => 'Sve obavijesti označene su pročitanima.',
     'Ukloni pročitane' => 'Ukloni pročitane',
