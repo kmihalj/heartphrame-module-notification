@@ -103,56 +103,54 @@ $readCount = max(0, $total - $unreadCount);
                 $itemClass = $isRead ? '' : 'border-start border-4 border-primary';
                 ?>
                     <div class="list-group-item py-3 <?= $itemClass ?>">
-                        <div class="d-flex align-items-start gap-2">
+                        <div class="d-flex align-items-center gap-3">
                             <a
-                                class="flex-grow-1 text-body text-decoration-none"
+                                class="flex-grow-1 overflow-hidden text-body text-decoration-none"
                                 href="<?= $this->escape($href) ?>"
                             >
-                                <div class="d-flex align-items-start justify-content-between gap-3">
-                                    <div>
-                                        <div class="<?= $isRead ? '' : 'fw-semibold' ?>">
-                                            <?= $this->escape((string)($notification['title'] ?? '')) ?>
-                                        </div>
-                                        <div class="text-body-secondary mt-1">
-                                            <?= nl2br(
-                                                $this->escape((string)($notification['message'] ?? '')),
-                                            ) ?>
-                                        </div>
-                                    </div>
-                                    <time class="small text-body-secondary text-nowrap">
-                                        <?= $this->escape((string)($notification['created_at'] ?? '')) ?>
-                                    </time>
+                                <div class="<?= $isRead ? '' : 'fw-semibold' ?>">
+                                    <?= $this->escape((string)($notification['title'] ?? '')) ?>
+                                </div>
+                                <div class="text-body-secondary mt-1">
+                                    <?= nl2br(
+                                        $this->escape((string)($notification['message'] ?? '')),
+                                    ) ?>
                                 </div>
                             </a>
-                            <?php if ($isRead) : ?>
-                                <form method="post" action="<?= $this->escape($deleteUrl) ?>">
-                                    <?= $this->csrfHandler->generateCsrfTokenInputField() ?>
-                                    <button
-                                        class="btn btn-sm btn-danger p-2 lh-1"
-                                        type="submit"
-                                        title="<?= $this->escape(__('Ukloni obavijest')) ?>"
-                                        aria-label="<?= $this->escape(__('Ukloni obavijest')) ?>"
-                                    >
-                                        <svg
-                                            aria-hidden="true"
-                                            width="16"
-                                            height="16"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            stroke-width="2"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
+                            <div class="d-flex flex-shrink-0 align-items-center gap-2">
+                                <time class="small text-body-secondary text-nowrap">
+                                    <?= $this->escape((string)($notification['created_at'] ?? '')) ?>
+                                </time>
+                                <?php if ($isRead) : ?>
+                                    <form method="post" action="<?= $this->escape($deleteUrl) ?>">
+                                        <?= $this->csrfHandler->generateCsrfTokenInputField() ?>
+                                        <button
+                                            class="btn btn-sm btn-danger p-2 lh-1"
+                                            type="submit"
+                                            title="<?= $this->escape(__('Ukloni obavijest')) ?>"
+                                            aria-label="<?= $this->escape(__('Ukloni obavijest')) ?>"
                                         >
-                                            <path d="M3 6h18"/>
-                                            <path d="M8 6V4h8v2"/>
-                                            <path d="M19 6l-1 14H6L5 6"/>
-                                            <path d="M10 11v5"/>
-                                            <path d="M14 11v5"/>
-                                        </svg>
-                                    </button>
-                                </form>
-                            <?php endif; ?>
+                                            <svg
+                                                aria-hidden="true"
+                                                width="16"
+                                                height="16"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <path d="M3 6h18"/>
+                                                <path d="M8 6V4h8v2"/>
+                                                <path d="M19 6l-1 14H6L5 6"/>
+                                                <path d="M10 11v5"/>
+                                                <path d="M14 11v5"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
             <?php endforeach; ?>
