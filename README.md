@@ -6,6 +6,27 @@ The Notification module provides a reusable, persistent in-app inbox. It adds
 an unread badge beside the authenticated user's name and a dedicated
 notification screen.
 
+## Dependencies
+
+Required, in enable order:
+
+1. `aaieduhr/heartphrame-framework` (`dev-main`)
+2. `aaieduhr/heartphrame-module-orm` (`dev-main`)
+3. `aaieduhr/heartphrame-module-auth` (`dev-main`)
+4. `aaieduhr/heartphrame-module-notification` (`dev-main`)
+
+Optional integrations:
+
+- `aaieduhr/heartphrame-module-email` queues user-approved e-mail copies.
+- `aaieduhr/heartphrame-module-api` exposes only the API-key owner's inbox and
+  read state; it never permits arbitrary message creation.
+
+```bash
+composer require aaieduhr/heartphrame-module-notification:dev-main
+vendor/bin/hph notification:install-migration
+vendor/bin/hph orm-migrate:up
+```
+
 Croatian documentation: [README_hr.md](README_hr.md)
 
 ## Features

@@ -5,6 +5,28 @@
 Notification modul daje aplikaciji zajednički trajni inbox. Uz ime prijavljenog
 korisnika prikazuje broj nepročitanih poruka i dodaje zaseban ekran obavijesti.
 
+## Ovisnosti
+
+Obavezno, redoslijedom uključivanja:
+
+1. `aaieduhr/heartphrame-framework` (`dev-main`)
+2. `aaieduhr/heartphrame-module-orm` (`dev-main`)
+3. `aaieduhr/heartphrame-module-auth` (`dev-main`)
+4. `aaieduhr/heartphrame-module-notification` (`dev-main`)
+
+Opcionalne integracije:
+
+- `aaieduhr/heartphrame-module-email` stavlja korisnički odobrene e-mail kopije
+  u red slanja.
+- `aaieduhr/heartphrame-module-api` izlaže samo inbox i stanje pročitanosti
+  vlasnika API ključa; ne dopušta stvaranje proizvoljnih poruka.
+
+```bash
+composer require aaieduhr/heartphrame-module-notification:dev-main
+vendor/bin/hph notification:install-migration
+vendor/bin/hph orm-migrate:up
+```
+
 English documentation: [README.md](README.md)
 
 ## Mogućnosti

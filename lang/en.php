@@ -36,8 +36,8 @@ return [
     'Nije moguće kreirati direktorij migracija.' => 'The migration directory cannot be created.',
     'Nije moguće kopirati Notification migraciju.' => 'The Notification migration cannot be copied.',
     'Kreirana je početna Notification migracija: ' => 'Created initial Notification migration: ',
-    'Sljedeći korak: pokreni `vendor/bin/hph orm-migrate up`.' =>
-        'Next step: run `vendor/bin/hph orm-migrate up`.',
+    'Sljedeći korak: pokreni `vendor/bin/hph orm-migrate:up`.' =>
+        'Next step: run `vendor/bin/hph orm-migrate:up`.',
     'Naziv migracije ne smije biti prazan.' => 'The migration name cannot be empty.',
     'Nepoznata Notification podnaredba: %s' => 'Unknown Notification subcommand: %s',
 ];

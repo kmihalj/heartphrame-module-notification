@@ -90,7 +90,7 @@ final readonly class HpNotificationCommand
         }
 
         $this->write(__('Kreirana je početna Notification migracija: ') . $target);
-        $this->write(__('Sljedeći korak: pokreni `vendor/bin/hph orm-migrate up`.'));
+        $this->write(__('Sljedeći korak: pokreni `vendor/bin/hph orm-migrate:up`.'));
 
         return 0;
     }
@@ -102,7 +102,7 @@ final readonly class HpNotificationCommand
     public function help(): int
     {
         $this->write('hph notification <install|help>');
-        $this->write('  vendor/bin/hph notification install');
+        $this->write('  vendor/bin/hph notification:install-migration');
 
         return 0;
     }

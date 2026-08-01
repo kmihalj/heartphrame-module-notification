@@ -26,6 +26,7 @@
         "aaieduhr/heartphrame-module-orm": "dev-main"
     },
     "suggest": {
+        "aaieduhr/heartphrame-module-api": "Exposes the API-key owner's notification inbox and read state through the versioned HTTP API.",
         "aaieduhr/heartphrame-module-email": "Queues optional e-mail copies of in-app notifications."
     },
     "require-dev": {

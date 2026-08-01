@@ -35,8 +35,8 @@ return [
     'Nije moguće kreirati direktorij migracija.' => 'Nije moguće kreirati direktorij migracija.',
     'Nije moguće kopirati Notification migraciju.' => 'Nije moguće kopirati Notification migraciju.',
     'Kreirana je početna Notification migracija: ' => 'Kreirana je početna Notification migracija: ',
-    'Sljedeći korak: pokreni `vendor/bin/hph orm-migrate up`.' =>
-        'Sljedeći korak: pokreni `vendor/bin/hph orm-migrate up`.',
+    'Sljedeći korak: pokreni `vendor/bin/hph orm-migrate:up`.' =>
+        'Sljedeći korak: pokreni `vendor/bin/hph orm-migrate:up`.',
     'Naziv migracije ne smije biti prazan.' => 'Naziv migracije ne smije biti prazan.',
     'Nepoznata Notification podnaredba: %s' => 'Nepoznata Notification podnaredba: %s',
 ];
