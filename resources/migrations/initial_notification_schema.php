@@ -17,34 +17,44 @@ return new class implements ReversibleMigrationInterface {
     public function up(Database $db): void
     {
         $schema = $db->schema();
-        if ($schema->hasTable(ModuleNotification::TABLE_NOTIFICATIONS)) {
-            return;
+        if (!$schema->hasTable(ModuleNotification::TABLE_NOTIFICATIONS)) {
+            $schema->create(ModuleNotification::TABLE_NOTIFICATIONS, static function (Blueprint $table): void {
+                $table->id();
+                $table->string('uuid', 36)->unique();
+                $table->bigInteger('user_id')->unsigned()->index();
+                $table->string('notification_key', 128)->index();
+                $table->string('title', 255);
+                $table->longText('message');
+                $table->string('link_url', 1024)->nullable();
+                $table->string('source_module', 128)->index();
+                $table->string('source_reference', 190)->nullable()->index();
+                $table->string('dedup_key', 190)->nullable();
+                $table->longText('data_json')->nullable();
+                $table->timestamp('read_at')->nullable()->index();
+                $table->timestamps();
+
+                $table->unique(
+                    ['user_id', 'dedup_key'],
+                    'notification_user_dedup_unique',
+                );
+                $table->index(
+                    ['user_id', 'read_at', 'created_at'],
+                    'notification_user_inbox_idx',
+                );
+            });
         }
 
-        $schema->create(ModuleNotification::TABLE_NOTIFICATIONS, static function (Blueprint $table): void {
-            $table->id();
-            $table->string('uuid', 36)->unique();
-            $table->bigInteger('user_id')->unsigned()->index();
-            $table->string('notification_key', 128)->index();
-            $table->string('title', 255);
-            $table->longText('message');
-            $table->string('link_url', 1024)->nullable();
-            $table->string('source_module', 128)->index();
-            $table->string('source_reference', 190)->nullable()->index();
-            $table->string('dedup_key', 190)->nullable();
-            $table->longText('data_json')->nullable();
-            $table->timestamp('read_at')->nullable()->index();
-            $table->timestamps();
-
-            $table->unique(
-                ['user_id', 'dedup_key'],
-                'notification_user_dedup_unique',
+        if (!$schema->hasTable(ModuleNotification::TABLE_USER_PREFERENCES)) {
+            $schema->create(
+                ModuleNotification::TABLE_USER_PREFERENCES,
+                static function (Blueprint $table): void {
+                    $table->id();
+                    $table->bigInteger('user_id')->unsigned()->unique();
+                    $table->boolean('email_enabled')->default(false)->index();
+                    $table->timestamps();
+                },
             );
-            $table->index(
-                ['user_id', 'read_at', 'created_at'],
-                'notification_user_inbox_idx',
-            );
-        });
+        }
     }
 
     /**
@@ -53,6 +63,7 @@ return new class implements ReversibleMigrationInterface {
      */
     public function down(Database $db): void
     {
+        $db->schema()->dropIfExists(ModuleNotification::TABLE_USER_PREFERENCES);
         $db->schema()->dropIfExists(ModuleNotification::TABLE_NOTIFICATIONS);
     }
 };

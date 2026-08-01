@@ -1,5 +1,7 @@
 # HeartPhrame Notification Module
 
+[Hrvatska verzija](README_hr.md)
+
 The Notification module provides a reusable, persistent in-app inbox. It adds
 an unread badge beside the authenticated user's name and a dedicated
 notification screen.
@@ -16,6 +18,8 @@ Croatian documentation: [README_hr.md](README_hr.md)
 - source module, source reference, structured JSON metadata, and safe local link
 - per-user deduplication key for repeatable background or workflow events
 - optional e-mail copies through `heartphrame-module-email`
+- personal account setting for opting into e-mail copies
+- optional owner-only HTTP API contributed through `config/api.php`
 - portable ORM schema for SQLite, PostgreSQL, and MySQL/MariaDB
 - no sample notifications in the initial migration
 
@@ -28,6 +32,10 @@ Croatian documentation: [README_hr.md](README_hr.md)
 
 The E-mail module is optional. The inbox continues to work if it is absent or
 SMTP delivery fails.
+
+The API module is optional. Notification remains independently installable and
+only advertises its scopes; HTTP adapters are registered by API when both
+modules are enabled.
 
 ## Installation
 
@@ -49,3 +57,9 @@ Detailed integration notes are in [docs/index_en.md](docs/index_en.md).
 
 This work is published under the
 [European Union Public License (EUPL) v1.2](LICENSE).
+
+## Dependency policy
+
+The Framework and internal HeartPhrame modules are required from the moving
+`dev-main` branch. This module does not commit `composer.lock`; CI resolves
+the latest development heads and runs the complete `composer on-commit` suite.

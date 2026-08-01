@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AaiEduHr\HeartPhrameModuleNotification\Controller;
 
 use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationModuleViewRenderer;
+use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationPreferenceService;
 use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationService;
 use HeartPhrame\Alert\Alert;
 use HeartPhrame\Alert\AlertHandler;
@@ -15,6 +16,7 @@ use HeartPhrame\Routing\UrlGenerator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function in_array;
 use function is_array;
 use function is_numeric;
 use function is_scalar;
@@ -22,6 +24,7 @@ use function max;
 use function rawurlencode;
 use function rtrim;
 use function str_starts_with;
+use function strtolower;
 use function trim;
 
 /**
@@ -41,6 +44,7 @@ final readonly class NotificationController
         private AuthnHandlerInterface $authnHandler,
         private UrlGenerator $urlGenerator,
         private AlertHandler $alertHandler,
+        private NotificationPreferenceService $preferences,
     ) {
     }
 
@@ -171,6 +175,34 @@ final readonly class NotificationController
 
         return $this->responseFactory->redirect(
             $this->pathFor('notification.index', '/notifications'),
+        );
+    }
+
+    /**
+     * HR: Sprema osobnu privolu za e-mail kopije obavijesti i vraća korisnika
+     *     na postojeći ekran profila.
+     * EN: Stores the personal opt-in for e-mail notification copies and returns
+     *     the user to the existing profile screen.
+     */
+    public function savePreferences(ServerRequestInterface $request): ResponseInterface
+    {
+        $body = $request->getParsedBody();
+        $emailValue = is_array($body) ? ($body['email_enabled'] ?? null) : null;
+        $emailEnabled = is_scalar($emailValue)
+        && in_array(
+            strtolower(trim((string)$emailValue)),
+            ['1', 'true', 'yes', 'on'],
+            true,
+        );
+
+        $this->preferences->saveEmailEnabled($this->currentUserId(), $emailEnabled);
+        $this->alertHandler->add(new Alert(
+            __('Postavke obavijesti su spremljene.'),
+            AlertLevelEnum::Success,
+        ));
+
+        return $this->responseFactory->redirect(
+            $this->pathFor('auth.account.profile', '/auth/account/profile'),
         );
     }
 

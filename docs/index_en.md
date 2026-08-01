@@ -47,10 +47,18 @@ these actions.
 
 ## Optional E-mail
 
-When module-email is installed and notification copies are enabled, the first
-in-app notification also enters the SMTP outbox. Every error in this auxiliary
-bridge is isolated: an unavailable mail server must never prevent the in-app
-message or the business workflow that created it.
+The user's Auth account screen contains **Send application notifications by
+e-mail**. The preference defaults to off. When module-email is installed and
+the recipient opted in, an in-app notification also enters the SMTP outbox.
+Every error in this auxiliary bridge is isolated: an unavailable mail server
+must never prevent the in-app message or the business workflow that created it.
+
+## Optional HTTP API
+
+`config/api.php` contributes `notifications:read` and `notifications:write`
+without importing API classes. When the API module is also enabled, its routes
+operate only on the key owner's inbox. There is deliberately no endpoint for
+creating arbitrary notifications; domain workflows create messages.
 
 ## Data and Privacy
 

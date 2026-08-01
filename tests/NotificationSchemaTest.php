@@ -51,6 +51,13 @@ final class NotificationSchemaTest extends TestCase
             'data_json',
             'read_at',
         ]));
+        $this->assertTrue($database->schema()->hasColumns(ModuleNotification::TABLE_USER_PREFERENCES, [
+            'user_id',
+            'email_enabled',
+            'created_at',
+            'updated_at',
+        ]));
         $this->assertSame([], $database->table(ModuleNotification::TABLE_NOTIFICATIONS)->get());
+        $this->assertSame([], $database->table(ModuleNotification::TABLE_USER_PREFERENCES)->get());
     }
 }

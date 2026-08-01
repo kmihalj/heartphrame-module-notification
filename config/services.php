@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 use AaiEduHr\HeartPhrameModuleNotification\Controller\NotificationController;
+use AaiEduHr\HeartPhrameModuleNotification\Account\NotificationAccountSectionProvider;
 use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationEmailBridge;
 use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationModuleViewRenderer;
 use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationNavigationProvider;
+use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationPreferenceService;
 use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationService;
 use AaiEduHr\HeartPhrameModuleOrm\Database\Database;
 use HeartPhrame\Alert\AlertHandler;
@@ -16,8 +18,15 @@ use HeartPhrame\Routing\UrlGenerator;
 use Psr\Container\ContainerInterface;
 
 return [
+    NotificationPreferenceService::class =>
+        static fn(ContainerInterface $container): NotificationPreferenceService =>
+            new NotificationPreferenceService($container->get(Database::class)),
+
     NotificationEmailBridge::class => static fn(ContainerInterface $container): NotificationEmailBridge =>
-        new NotificationEmailBridge($container),
+        new NotificationEmailBridge(
+            $container,
+            $container->get(NotificationPreferenceService::class),
+        ),
 
     NotificationService::class => static fn(ContainerInterface $container): NotificationService =>
         new NotificationService(
@@ -48,5 +57,13 @@ return [
             $container->get(AuthnHandlerInterface::class),
             $container->get(UrlGenerator::class),
             $container->get(AlertHandler::class),
+            $container->get(NotificationPreferenceService::class),
         ),
+
+    NotificationAccountSectionProvider::class =>
+        static fn(ContainerInterface $container): NotificationAccountSectionProvider =>
+            new NotificationAccountSectionProvider(
+                $container->get(NotificationPreferenceService::class),
+                $container->get(UrlGenerator::class),
+            ),
 ];

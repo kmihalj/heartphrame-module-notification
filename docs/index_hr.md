@@ -47,10 +47,18 @@ poruke.
 
 ## Opcionalni e-mail
 
-Kada je module-email instaliran i uključene su kopije obavijesti, prva in-app
-poruka ulazi i u SMTP outbox. Svaka greška pomoćnog mosta je izolirana:
-nedostupan mail poslužitelj ne smije spriječiti inbox poruku ni poslovni
-workflow koji ju je stvorio.
+Auth ekran korisničkog računa sadrži postavku **Šalji obavijesti aplikacije
+e-mailom**. Postavka je zadano isključena. Kada je module-email instaliran i
+primatelj uključi kopije, in-app poruka ulazi i u SMTP outbox. Svaka greška
+pomoćnog mosta je izolirana: nedostupan mail poslužitelj ne smije spriječiti
+inbox poruku ni poslovni workflow koji ju je stvorio.
+
+## Opcionalni HTTP API
+
+`config/api.php` oglašava `notifications:read` i `notifications:write` bez
+uvoza API klasa. Kada je uključen i API modul, njegove rute rade isključivo nad
+inboxom vlasnika ključa. Namjerno nema endpointa za proizvoljno stvaranje
+obavijesti; poruke stvaraju domenski workflowi.
 
 ## Podaci i privatnost
 

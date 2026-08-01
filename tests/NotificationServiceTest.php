@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AaiEduHr\HeartPhrameModuleNotification\Tests;
 
 use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationEmailBridge;
+use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationPreferenceService;
 use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationService;
 use AaiEduHr\HeartPhrameModuleOrm\Database\Database;
 use AaiEduHr\HeartPhrameModuleOrm\Database\Migration\ReversibleMigrationInterface;
@@ -18,6 +19,7 @@ use RuntimeException;
 
 #[CoversClass(NotificationService::class)]
 #[UsesClass(NotificationEmailBridge::class)]
+#[UsesClass(NotificationPreferenceService::class)]
 final class NotificationServiceTest extends TestCase
 {
     private NotificationService $notifications;
@@ -45,7 +47,10 @@ final class NotificationServiceTest extends TestCase
         $migration->up($database);
         $this->notifications = new NotificationService(
             $database,
-            new NotificationEmailBridge($this->emptyContainer()),
+            new NotificationEmailBridge(
+                $this->emptyContainer(),
+                new NotificationPreferenceService($database),
+            ),
         );
     }
 

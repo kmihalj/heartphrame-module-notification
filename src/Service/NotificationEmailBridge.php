@@ -24,8 +24,10 @@ final readonly class NotificationEmailBridge
      * HR: Prima zajednički container bez čvrste Composer ovisnosti o e-mail modulu.
      * EN: Receives the shared container without a hard Composer dependency on the e-mail module.
      */
-    public function __construct(private ContainerInterface $container)
-    {
+    public function __construct(
+        private ContainerInterface $container,
+        private NotificationPreferenceService $preferences,
+    ) {
     }
 
     /**
@@ -41,7 +43,11 @@ final readonly class NotificationEmailBridge
         string $linkUrl,
         string $dedupKey,
     ): void {
-        if ($userId <= 0 || !class_exists(self::EMAIL_SERVICE)) {
+        if (
+            $userId <= 0
+            || !$this->preferences->emailEnabled($userId)
+            || !class_exists(self::EMAIL_SERVICE)
+        ) {
             return;
         }
 

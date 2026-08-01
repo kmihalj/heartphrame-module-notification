@@ -203,22 +203,51 @@ final readonly class NotificationService
      * HR: Vraća jednu stranicu inboxa i ukupan broj rezultata.
      * EN: Returns one inbox page and the total result count.
      *
-     * @return array{items: list<array<string, mixed>>, total: int, page: int, pages: int, page_size: int}
+     * @return array{
+     *     items: list<array<string, mixed>>,
+     *     total: int,
+     *     page: int,
+     *     pages: int,
+     *     page_size: int,
+     *     state: string
+     * }
      */
-    public function inbox(int $userId, int $page = 1, int $pageSize = 30): array
-    {
+    public function inbox(
+        int $userId,
+        int $page = 1,
+        int $pageSize = 30,
+        string $state = 'all',
+    ): array {
         $this->assertTablesReady();
         $page = max(1, $page);
         $pageSize = max(1, min(100, $pageSize));
-        $countRow = $this->database->table(ModuleNotification::TABLE_NOTIFICATIONS)
+        $state = strtolower(trim($state));
+        if (!in_array($state, ['all', 'read', 'unread'], true)) {
+            throw new RuntimeException(__('Filtar stanja obavijesti nije valjan.'));
+        }
+
+        $countQuery = $this->database->table(ModuleNotification::TABLE_NOTIFICATIONS)
             ->select(['COUNT(*) AS aggregate'])
-            ->where('user_id', '=', $userId)
-            ->first();
+            ->where('user_id', '=', $userId);
+        if ($state === 'read') {
+            $countQuery->whereNotNull('read_at');
+        } elseif ($state === 'unread') {
+            $countQuery->whereNull('read_at');
+        }
+
+        $countRow = $countQuery->first();
         $total = $this->intValue(is_array($countRow) ? $countRow['aggregate'] ?? 0 : 0);
         $pages = max(1, (int)ceil($total / $pageSize));
         $page = min($page, $pages);
-        $rows = $this->database->table(ModuleNotification::TABLE_NOTIFICATIONS)
-            ->where('user_id', '=', $userId)
+        $itemsQuery = $this->database->table(ModuleNotification::TABLE_NOTIFICATIONS)
+            ->where('user_id', '=', $userId);
+        if ($state === 'read') {
+            $itemsQuery->whereNotNull('read_at');
+        } elseif ($state === 'unread') {
+            $itemsQuery->whereNull('read_at');
+        }
+
+        $rows = $itemsQuery
             ->orderBy('created_at', 'DESC')
             ->orderBy('id', 'DESC')
             ->limit($pageSize)
@@ -238,6 +267,7 @@ final readonly class NotificationService
             'page' => $page,
             'pages' => $pages,
             'page_size' => $pageSize,
+            'state' => $state,
         ];
     }
 
@@ -260,6 +290,30 @@ final readonly class NotificationService
                 ->where('id', '=', $this->intValue($notification['id'] ?? 0))
                 ->update(['read_at' => $now, 'updated_at' => $now]);
             $notification['read_at'] = $now;
+        }
+
+        return $this->normalizeRow($notification);
+    }
+
+    /**
+     * HR: Ponovno označava korisnikovu poruku nepročitanom i vraća je.
+     * EN: Marks a notification owned by the user as unread again and returns it.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function markUnread(int $userId, string $uuid): ?array
+    {
+        $notification = $this->findForUserByUuid($userId, $uuid);
+        if (!is_array($notification)) {
+            return null;
+        }
+
+        if (($notification['read_at'] ?? null) !== null) {
+            $now = date('Y-m-d H:i:s');
+            $this->database->table(ModuleNotification::TABLE_NOTIFICATIONS)
+                ->where('id', '=', $this->intValue($notification['id'] ?? 0))
+                ->update(['read_at' => null, 'updated_at' => $now]);
+            $notification['read_at'] = null;
         }
 
         return $this->normalizeRow($notification);

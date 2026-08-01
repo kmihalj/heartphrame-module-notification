@@ -16,6 +16,8 @@ final class ModuleNotification
 
     public const TABLE_NOTIFICATIONS = 'notifications';
 
+    public const TABLE_USER_PREFERENCES = 'notification_user_preferences';
+
     /**
      * HR: Sprječava instanciranje registra konstanti.
      * EN: Prevents instantiation of the constants registry.

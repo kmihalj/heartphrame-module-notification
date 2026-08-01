@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use AaiEduHr\HeartPhrameModuleAuth\Account\AuthAccountSectionRegistry;
 use AaiEduHr\HeartPhrameModuleAuth\Middleware\RequireAuthenticatedUserMiddleware;
 use AaiEduHr\HeartPhrameModuleAuth\ModuleAuth;
+use AaiEduHr\HeartPhrameModuleNotification\Account\NotificationAccountSectionProvider;
 use AaiEduHr\HeartPhrameModuleNotification\Controller\NotificationController;
 use AaiEduHr\HeartPhrameModuleNotification\ModuleNotification;
 use AaiEduHr\HeartPhrameModuleOrm\Database\Database;
@@ -115,6 +117,37 @@ return new class extends \HeartPhrame\Module\AbstractModuleManifest {
                 'notification.delete-read',
                 $authenticated,
             ],
+            [
+                'POST',
+                '/notifications/preferences',
+                NotificationController::class . '@savePreferences',
+                'notification.preferences.save',
+                $authenticated,
+            ],
+        ];
+    }
+
+    /**
+     * HR: Nakon registracije servisa dodaje Notification postavke u proširivi
+     *     profil Auth modula.
+     * EN: After service registration, adds Notification settings to the
+     *     extensible Auth profile.
+     *
+     * @return mixed[]
+     */
+    public function getBootstrapCallables(): array
+    {
+        return [
+            static function (ContainerInterface $container): void {
+                $registry = $container->get(AuthAccountSectionRegistry::class);
+                $provider = $container->get(NotificationAccountSectionProvider::class);
+                if (
+                    $registry instanceof AuthAccountSectionRegistry
+                    && $provider instanceof NotificationAccountSectionProvider
+                ) {
+                    $registry->register($provider);
+                }
+            },
         ];
     }
 
