@@ -9,6 +9,7 @@ use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationPreferenceService
 use AaiEduHr\HeartPhrameModuleNotification\Service\NotificationService;
 use AaiEduHr\HeartPhrameModuleOrm\Database\Database;
 use AaiEduHr\HeartPhrameModuleOrm\Database\Migration\ReversibleMigrationInterface;
+use AaiEduHr\HeartPhrameModuleOrm\Database\QueryExecuted;
 use HeartPhrame\Config\Config;
 use HeartPhrame\Helper\Helper;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -22,6 +23,8 @@ use RuntimeException;
 #[UsesClass(NotificationPreferenceService::class)]
 final class NotificationServiceTest extends TestCase
 {
+    private Database $database;
+
     private NotificationService $notifications;
 
     /**
@@ -42,6 +45,8 @@ final class NotificationServiceTest extends TestCase
             ],
         ]);
         $database = new Database($config, $helper);
+        $this->database = $database;
+
         $migration = require dirname(__DIR__) . '/resources/migrations/initial_notification_schema.php';
         $this->assertInstanceOf(ReversibleMigrationInterface::class, $migration);
         $migration->up($database);
@@ -148,6 +153,40 @@ final class NotificationServiceTest extends TestCase
         $this->assertSame(1, $this->notifications->deleteAllRead(7));
         $this->assertCount(0, $this->notifications->inbox(7)['items']);
         $this->assertCount(1, $this->notifications->inbox(8)['items']);
+    }
+
+    /**
+     * HR: Inbox na velikom skupu izvodi samo COUNT i jedan paginirani SELECT;
+     *     kompozitni indeks iz migracije pokriva korisnika, stanje i redoslijed.
+     * EN: A large inbox executes only COUNT and one paginated SELECT; the
+     *     migration's composite index covers user, state, and ordering.
+     */
+    public function testInboxQueriesStayConstantAsNotificationVolumeGrows(): void
+    {
+        for ($index = 1; $index <= 250; ++$index) {
+            $this->notifications->notifyUser(
+                7,
+                'performance.batch',
+                'Obavijest ' . $index,
+                'Sadržaj ' . $index,
+                dedupKey: 'performance:' . $index,
+                sendEmail: false,
+            );
+        }
+
+        $inboxQueries = 0;
+        $this->database->listen(static function (QueryExecuted $query) use (&$inboxQueries): void {
+            if (stripos(ltrim($query->sql), 'select') === 0) {
+                ++$inboxQueries;
+            }
+        });
+
+        $inbox = $this->notifications->inbox(7, 3, 50, 'unread');
+
+        $this->assertSame(250, $inbox['total']);
+        $this->assertSame(3, $inbox['page']);
+        $this->assertCount(50, $inbox['items']);
+        $this->assertSame(2, $inboxQueries);
     }
 
     /**

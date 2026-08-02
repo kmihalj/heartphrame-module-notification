@@ -84,3 +84,9 @@ This work is published under the
 The Framework and internal HeartPhrame modules are required from the moving
 `dev-main` branch. This module does not commit `composer.lock`; CI resolves
 the latest development heads and runs the complete `composer on-commit` suite.
+
+## Performance characteristics
+
+Inbox pagination remains two SELECT statements at any volume: one count and
+one bounded page. The composite inbox index supports state filtering and
+ordering without introducing a stale cross-request unread-count cache.

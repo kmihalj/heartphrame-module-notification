@@ -65,3 +65,11 @@ creating arbitrary notifications; domain workflows create messages.
 Store only the metadata needed to present or route the notification. The
 `data_json` field is useful for IDs and version numbers, but it should not hold
 passwords, tokens, full documents, or other secrets.
+
+## Large inboxes
+
+Inbox pagination uses one `COUNT` and one bounded page query regardless of the
+number of stored notifications. The initial migration includes a composite
+`user_id`, `read_at`, `created_at` index, and the regression suite verifies the
+two-query contract with 250 unread notifications. No cross-request unread-count
+cache is used, so new and read messages are visible immediately.

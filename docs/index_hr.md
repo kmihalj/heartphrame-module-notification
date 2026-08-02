@@ -65,3 +65,11 @@ obavijesti; poruke stvaraju domenski workflowi.
 Spremajte samo metapodatke potrebne za prikaz ili usmjeravanje obavijesti.
 `data_json` je prikladan za ID-eve i brojeve verzija, ali ne za lozinke, tokene,
 cijele dokumente ili druge tajne.
+
+## Veliki inboxi
+
+Paginacija inboxa izvodi jedan `COUNT` i jedan ograničeni upit stranice bez
+obzira na broj spremljenih obavijesti. Početna migracija sadrži kompozitni indeks
+`user_id`, `read_at`, `created_at`, a regresijski test provjerava ugovor od dva
+upita na 250 nepročitanih obavijesti. Cache broja nepročitanih ne dijeli se među
+zahtjevima pa su nove i pročitane poruke odmah vidljive.

@@ -84,3 +84,9 @@ Modul je objavljen pod
 Framework i interni HeartPhrame moduli zahtijevaju se s pomične grane
 `dev-main`. Ovaj modul ne sprema `composer.lock`; CI dohvaća najnovija
 razvojna stanja i pokreće cijeli skup provjera `composer on-commit`.
+
+## Svojstva performansi
+
+Paginacija inboxa ostaje na dva SELECT upita neovisno o količini: jedan za broj
+i jedan za ograničenu stranicu. Kompozitni indeks podržava filtriranje stanja i
+redoslijed bez zastarjelog cachea broja nepročitanih među zahtjevima.
