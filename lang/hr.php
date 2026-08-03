@@ -39,4 +39,11 @@ return [
         'Sljedeći korak: pokreni `vendor/bin/hph orm-migrate:up`.',
     'Naziv migracije ne smije biti prazan.' => 'Naziv migracije ne smije biti prazan.',
     'Nepoznata Notification podnaredba: %s' => 'Nepoznata Notification podnaredba: %s',
+    'E-mail se šalje samo kada je E-mail modul instaliran i SMTP ispravno podešen.' => 'E-mail se šalje samo kada je E-mail modul instaliran i SMTP ispravno podešen.',
+    'Filtar stanja obavijesti nije valjan.' => 'Filtar stanja obavijesti nije valjan.',
+    'Odaberite želite li uz obavijest u aplikaciji primiti i e-mail kopiju.' => 'Odaberite želite li uz obavijest u aplikaciji primiti i e-mail kopiju.',
+    'Postavke obavijesti su spremljene.' => 'Postavke obavijesti su spremljene.',
+    'Postavke obavijesti trenutačno nisu dostupne.' => 'Postavke obavijesti trenutačno nisu dostupne.',
+    'Spremi postavke obavijesti' => 'Spremi postavke obavijesti',
+    'Šalji mi e-mail kopije obavijesti' => 'Šalji mi e-mail kopije obavijesti',
 ];

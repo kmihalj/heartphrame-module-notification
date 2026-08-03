@@ -40,4 +40,11 @@ return [
         'Next step: run `vendor/bin/hph orm-migrate:up`.',
     'Naziv migracije ne smije biti prazan.' => 'The migration name cannot be empty.',
     'Nepoznata Notification podnaredba: %s' => 'Unknown Notification subcommand: %s',
+    'E-mail se šalje samo kada je E-mail modul instaliran i SMTP ispravno podešen.' => 'Email is sent only when the Email module is installed and SMTP is configured correctly.',
+    'Filtar stanja obavijesti nije valjan.' => 'The notification status filter is invalid.',
+    'Odaberite želite li uz obavijest u aplikaciji primiti i e-mail kopiju.' => 'Choose whether to receive an email copy in addition to the in-app notification.',
+    'Postavke obavijesti su spremljene.' => 'Notification settings were saved.',
+    'Postavke obavijesti trenutačno nisu dostupne.' => 'Notification settings are currently unavailable.',
+    'Spremi postavke obavijesti' => 'Save notification settings',
+    'Šalji mi e-mail kopije obavijesti' => 'Send me e-mail copies of notifications',
 ];
